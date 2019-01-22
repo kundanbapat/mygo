@@ -6,25 +6,41 @@ import (
 	"strings"
 )
 
-func work(ch chan string) {
-	ch <- "Howdy "
-}
-
 func handleRequest(w http.ResponseWriter, r *http.Request) {
-	ch := make(chan string)
-	go work(ch)
-	var x = <-ch
-
-	fmt.Println("Request handled: ", x)
-
 	message := r.URL.Path
 	message = strings.TrimPrefix(message, "/")
-	message = x + message
+	message = "Howdyyyy " + message
+	w.Write([]byte(message))
+}
+
+func getData(w http.ResponseWriter, r *http.Request) {
+	// serve Files
+	message := r.URL.Path
+	message = strings.TrimPrefix(message, "/getData/")
+	message = GetDataResponse()
+
+	message = "<html>" + message + Footer() + "</html>"
+
+	w.Write([]byte(message))
+}
+
+func postData(w http.ResponseWriter, r *http.Request) {
+	// serve Files
+	message := r.URL.Path
+	message = strings.TrimPrefix(message, "/getData/")
+	message = PostDataResponse()
+
+	message = "<html>" + message + Footer() + "</html>"
+
 	w.Write([]byte(message))
 }
 
 func main() {
-	http.HandleFunc("/", handleRequest)
+	http.HandleFunc("/getData/", getData)
+	http.HandleFunc("/postData/", postData)
+
+	fs := http.FileServer(http.Dir("./"))
+	http.Handle("/", http.StripPrefix("/", fs))
 
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		fmt.Println("listen failed ", err.Error())

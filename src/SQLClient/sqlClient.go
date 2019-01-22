@@ -120,7 +120,7 @@ func CreateEmployee(name, location string) (int64, error) {
 	var newID int64
 	err = row.Scan(&newID)
 	if err != nil {
-		fmt.Println("---- error 3 ----")
+		fmt.Println("---- error 3 ----", err.Error())
 		return -1, err
 	}
 	fmt.Println("3")
