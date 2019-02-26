@@ -1,4 +1,5 @@
 use cyfir;
+
 DROP TABLE IF EXISTS person;
 create table person (
     id INT NOT NULL,
